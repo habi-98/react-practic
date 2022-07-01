@@ -28,7 +28,6 @@ function App() {
 
     const [fetchPosts, isPostsLoading, postError] = useFetching(async () => {
         const response = await PostServer.getAll(limit, page)
-        console.log(response.headers['x-total-count'])
         setPosts(response.data)
         const totalCount = response.headers['x-total-count']
         setTotalPage(getPageCount(totalCount, limit))
@@ -44,8 +43,11 @@ function App() {
     }
     useEffect(() => {
         fetchPosts()
-    }, [])
+    }, [page] )
 
+    const changePage = (page) => {
+        setPage(page)
+    }
 
     return (
         <div className="App">
@@ -65,6 +67,15 @@ function App() {
                 : <PostList remove={removePost} posts={sortedAdnSearchedPosts} title={'Список постов 1'}/>
 
             }
+            <div className="page__wrapper">
+                {pagesArray.map(p => (
+                    <span
+                        onClick={() => changePage(p)}
+                        key={p}
+                        className={page === p ? 'page page__current' : 'page' }>{p}</span>
+                ))}
+            </div>
+
         </div>
     );
 }
